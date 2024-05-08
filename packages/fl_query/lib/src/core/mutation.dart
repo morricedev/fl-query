@@ -111,7 +111,8 @@ class Mutation<DataType, ErrorType, VariablesType>
         },
         config: retryConfig,
         onSuccessful: (data) {
-          state = state.copyWith(data: () => data, loading: false, error: () => null);
+          state = state.copyWith(
+              data: () => data, loading: false, error: () => null);
           if (data is DataType) {
             _dataController.add(data);
           }
@@ -121,6 +122,7 @@ class Mutation<DataType, ErrorType, VariablesType>
           if (error is ErrorType) {
             _errorController.add(error);
           }
+          if (error != null) throw error;
         },
       );
 
