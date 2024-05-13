@@ -119,10 +119,15 @@ class Mutation<DataType, ErrorType, VariablesType>
         },
         onFailed: (error) {
           state = state.copyWith(error: () => error, loading: false);
-          if (error is ErrorType) {
-            _errorController.add(error);
+
+          if (error == null) {
+            final exception = Exception('Unknown error');
+            _errorController.addError(exception);
+            throw exception;
           }
-          if (error != null) throw error;
+
+          _errorController.add(error);
+          throw error;
         },
       );
 

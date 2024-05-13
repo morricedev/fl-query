@@ -23,20 +23,23 @@ mixin Retryer<T, E> {
         onSuccessful(result);
         break;
       } catch (e, stack) {
+        final retriesExceeded = attempts == config.maxRetries - 1;
         if (e is E?) {
-          if (attempts == config.maxRetries - 1) {
+          if (retriesExceeded) {
             onFailed(e as E?);
           }
         } else {
-          FlutterError.reportError(
-            FlutterErrorDetails(
-              exception: e,
-              library: 'fl_query',
-              context: ErrorDescription('retryOperation'),
-              stack: stack,
-            ),
-          );
-          rethrow;
+          if (retriesExceeded) {
+            FlutterError.reportError(
+              FlutterErrorDetails(
+                exception: e,
+                library: 'fl_query',
+                context: ErrorDescription('retryOperation'),
+                stack: stack,
+              ),
+            );
+            onFailed(null);
+          }
         }
         if (!await QueryClient.connectivity.isConnected) {
           break;
