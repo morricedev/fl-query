@@ -36,6 +36,7 @@ mixin Retryer<T, E> {
               stack: stack,
             ),
           );
+          rethrow;
         }
         if (!await QueryClient.connectivity.isConnected) {
           break;
